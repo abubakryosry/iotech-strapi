@@ -39,3 +39,16 @@ Follow the instructions provided in the repository to start the Strapi server lo
 2. Install dependencies:
    ```bash
    npm install
+
+3. Run the development server:
+
+```bash
+npm run dev
+```
+4. Open http://localhost:3000 to view it in the browser.
+5. Happy coding! 🚀
+
+```vbnet
+
+
+Let me know if you need any changes or additions!```
