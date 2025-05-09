@@ -55,64 +55,80 @@ const HeroSection = ({ locale }: HeroSectionProps) => {
 
   return (
     <section className="relative h-screen overflow-hidden">
-      {/* Background Swiper */}
       <div className="absolute inset-0 z-0">
         <Swiper
           modules={[Autoplay, Pagination]}
-          autoplay={{ delay: 3000, disableOnInteraction: false }}
+          autoplay={{
+            delay: 3000,
+            disableOnInteraction: false,
+          }}
           pagination={{
             clickable: true,
             el: ".custom-pagination",
             renderBullet: (index, className) =>
               `<span class="${className} custom-bullet"></span>`,
           }}
-          loop
+          loop={true}
           className="w-full h-full"
+          onInit={(swiper) => {
+            // Explicitly start autoplay after initialization
+            if (swiper?.autoplay) swiper.autoplay.start();
+          }}
+          onSlideChange={(swiper) => {
+            // Restart autoplay when slide changes
+            if (swiper?.autoplay) swiper.autoplay.start();
+          }}
+          onPaginationUpdate={(swiper) => {
+            // Restart autoplay when clicking on dots
+            if (swiper?.autoplay) swiper.autoplay.start();
+          }}
         >
-          {slides.map((slide, index) => (
-            <SwiperSlide key={index}>
-              {slide.type === "image" ? (
-                <div className="relative w-full h-full">
-                  <Image
-                    src={slide.src}
-                    alt={slide.alt}
-                    fill
-                    sizes="100vw"
-                    style={{ objectFit: "cover" }}
-                    priority
-                  />
-                </div>
-              ) : (
-                <video
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  className="absolute inset-0 w-full h-full object-cover"
-                >
-                  <source src={slide.src} type="video/mp4" />
-                </video>
-              )}
-              <div className="absolute inset-0 bg-black/60"></div>
-            </SwiperSlide>
-          ))}
+          {/* Ensure video slides are prioritized */}
+          {slides
+            .sort((a, b) => (a.type === "video" ? -1 : 1))
+            .map((slide, index) => (
+              <SwiperSlide key={index}>
+                {slide.type === "video" ? (
+                  <video
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className="absolute inset-0 w-full h-full object-cover"
+                  >
+                    <source src={slide.src} type="video/mp4" />
+                  </video>
+                ) : (
+                  <div className="relative w-full h-full">
+                    <Image
+                      src={slide.src}
+                      alt={slide.alt}
+                      fill
+                      sizes="100vw"
+                      style={{ objectFit: "cover" }}
+                      priority
+                    />
+                  </div>
+                )}
+                <div className="absolute inset-0 bg-brown/50"></div>
+              </SwiperSlide>
+            ))}
         </Swiper>
       </div>
 
-      {/* Foreground Content */}
       <div className="relative z-10 mx-auto h-full flex items-center justify-center px-6 w-[90%]">
         <div
           className={`flex w-full items-center justify-between ${
             locale === "ar" ? "flex-row-reverse" : ""
           }`}
         >
-          {/* Left Section: Pagination - Text - Image */}
+          {/* Left Section */}
           <div
-            className={`flex flex-col space-y-6 w-[80%] ${
+            className={`flex flex-row w-[80%] ${
               locale === "ar" ? "flex-row-reverse" : ""
             }`}
           >
-            <div className="custom-pagination flex flex-col space-y-3"></div>
+            <div className="custom-pagination flex flex-col"></div>
             <div
               className={`text-white ${
                 locale === "ar" ? "md:mr-20 text-right" : "md:ml-20 text-left"
@@ -133,9 +149,9 @@ const HeroSection = ({ locale }: HeroSectionProps) => {
           </div>
 
           {/* Right Section: Square Image */}
-          <div className="bg-brown p-2 rounded-md shadow-lg w-[300px] h-[300px] flex items-center justify-center">
+          <div className=" p-2 rounded-md shadow-lg w-[300px] h-[300px] flex items-center justify-center">
             <Image
-              src="/images/profile.jpg"
+              src="/Image.png"
               alt="Profile"
               width={300}
               height={300}

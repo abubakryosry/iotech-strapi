@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import Navbar from "@/app/[locale]/components/navbar/Navbar";
 import Footer from "@/app/[locale]/components/Footer";
-
+import ReduxProvider from "@/app/redux/provider";
 
 export const metadata: Metadata = {
   title: "IO Tech Task",
@@ -11,16 +11,17 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   return (
     <html lang="en">
-      <body
-      >
-        <Navbar locale={"locale"}/>
-        {children}
-        <Footer locale={"locale"}/>
+      <body>
+        <ReduxProvider>
+          <Navbar/>
+          {children}
+          <Footer/>
+        </ReduxProvider>
       </body>
     </html>
   );

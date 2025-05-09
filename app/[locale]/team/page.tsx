@@ -1,11 +1,10 @@
 import React from "react";
 import Image from "next/image";
 import { FaWhatsapp, FaPhoneAlt, FaEnvelope } from "react-icons/fa";
+import CoverImage from "../components/CoverImage";
 
-// Define the base URL for your API
 const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:1337";
 
-// Type definition for team members
 type TeamMember = {
   id: number;
   name: string;
@@ -13,12 +12,11 @@ type TeamMember = {
   image: string;
 };
 
-// Server-side function to fetch team members based on locale
 async function fetchTeams(locale: string): Promise<TeamMember[]> {
   const apiUrl = `${baseUrl}/api/teams?locale=${locale}&populate=*`;
 
   try {
-    const response = await fetch(apiUrl, { cache: "no-store" }); // Ensure fresh data fetching
+    const response = await fetch(apiUrl, { cache: "no-store" });
     if (!response.ok) {
       throw new Error(`Failed to fetch teams for locale: ${locale}`);
     }
@@ -26,14 +24,14 @@ async function fetchTeams(locale: string): Promise<TeamMember[]> {
 
     return (
       data?.data?.map((member: any) => {
-        const imageUrl = member?.attributes?.image?.data?.attributes?.url
-          ? `${baseUrl}${member.attributes.image.data.attributes.url}`
+        const imageUrl = member?.image?.url
+          ? `${baseUrl}${member.image.url}`
           : "/image.png";
 
         return {
           id: member.id,
-          name: member.attributes.name || "Name Here",
-          position: member.attributes.position || "Position Here",
+          name: member.name || "Name Here",
+          position: member.title || "Position Here",
           image: imageUrl,
         };
       }) || []
@@ -44,14 +42,17 @@ async function fetchTeams(locale: string): Promise<TeamMember[]> {
   }
 }
 
-// TeamsPage component
-const TeamsPage = async ({ params }: { params: { locale: string } }) => {
+const TeamPage = async ({ params }: { params: { locale: string } }) => {
   const locale = params.locale === "ar" ? "ar" : "en";
 
   // Fetch team data on the server
   const teams = await fetchTeams(locale);
 
   return (
+    <>
+    <div className="h-{70%}">
+      <CoverImage/>
+    </div>
     <section className="min-h-screen bg-gray-100 py-10">
       <div className="container mx-auto px-4">
         <h1
@@ -72,7 +73,7 @@ const TeamsPage = async ({ params }: { params: { locale: string } }) => {
             {teams.map((member) => (
               <div
                 key={member.id}
-                className="bg-white rounded-lg shadow-lg p-4 hover:shadow-xl transition"
+                className="bg-white rounded-lg shadow-lg p-7 hover:shadow-xl transition"
               >
                 <div className="relative h-56 mb-4 rounded-md overflow-hidden">
                   <Image
@@ -106,8 +107,8 @@ const TeamsPage = async ({ params }: { params: { locale: string } }) => {
           </div>
         )}
       </div>
-    </section>
+    </section></>
   );
 };
 
-export default TeamsPage;
+export default TeamPage;

@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { usePathname, useParams } from "next/navigation";
+import { useParams } from "next/navigation";
 import { FaTwitter, FaFacebookF, FaGooglePlusG } from "react-icons/fa";
 import { useFormik } from "formik";
 import * as Yup from "yup";
