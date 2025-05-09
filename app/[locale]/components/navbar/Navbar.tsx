@@ -8,72 +8,52 @@ import Image from "next/image";
 import LanguageSwitcher from "../LanguageSwitcher";
 import { RootState } from "@/app/redux/store";
 import { useSelector } from "react-redux";
+import { fetchServices } from '@/lib/api';
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [showSearch, setShowSearch] = useState(false);
   const [isHydrated, setIsHydrated] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
-
+  const [serviceItems, setServiceItems] = useState<string[][]>([]); // State for storing grouped service items
+  
+  const selectedLanguage = useSelector((state: RootState) => state.language.language);
+  const isRtl = selectedLanguage === "ar";
+  
+  // Always run this effect on mount and when selectedLanguage changes
   useEffect(() => {
     setIsHydrated(true);
   }, []);
 
-  const selectedLanguage = useSelector((state: RootState) => state.language.language);
-  const isRtl = selectedLanguage === "ar";
-  if (!isHydrated) return null;
-    const navLinks = [
+  // Fetch and set services dynamically based on the selected language
+  useEffect(() => {
+    async function loadServices() {
+      const services = await fetchServices(selectedLanguage); // Fetching services from the API
+
+      // Group services into chunks of 4
+      const chunkSize = 4;
+      const groupedServices: string[][] = [];
+      for (let i = 0; i < services.length; i += chunkSize) {
+        const chunk = services.slice(i, i + chunkSize).map((service: any) => service.title);
+        groupedServices.push(chunk);
+      }
+      setServiceItems(groupedServices);
+    }
+
+    loadServices();
+  }, [selectedLanguage]);
+
+  useEffect(() => {
+    // This ensures that the effect for hydration is only triggered once
+    if (!isHydrated) return;
+  }, [isHydrated]);
+
+  const navLinks = [
     { label: selectedLanguage === "ar" ? "الرئيسية" : "Home", href: "/" },
     { label: selectedLanguage === "ar" ? "من نحن" : "About Us", href: "/about" },
     { label: selectedLanguage === "ar" ? "المدونة" : "Blog", href: `/${selectedLanguage}/blog/` },
     { label: selectedLanguage === "ar" ? "فريقنا" : "Our Team", href: `/${selectedLanguage}/team/` },
     { label: selectedLanguage === "ar" ? "اتصل بنا" : "Contact Us", href: `/${selectedLanguage}/contact/` },
-  ];
-  
-
-  const serviceItems = [
-    [
-      selectedLanguage === "ar"
-        ? "خدمات الاستشارات القانونية"
-        : "Legal Consultation Services",
-      selectedLanguage === "ar" ? "خدمات الاستثمار الأجنبي" : "Foreign Investment Services",
-      selectedLanguage === "ar" ? "العقود" : "Contracts",
-      selectedLanguage === "ar" ? "التوثيق" : "Notarization",
-      selectedLanguage === "ar" ? "التأمين" : "Insurance",
-    ],
-    [
-      selectedLanguage === "ar"
-        ? "..... والدفاع في جميع القضايا"
-        : "..... and Defense in All Cases",
-      selectedLanguage === "ar"
-        ? "البنوك والمؤسسات المالية"
-        : "Banks and Financial Institutions",
-      selectedLanguage === "ar"
-        ? "خدمات الحوكمة"
-        : "Corporate Governance Services",
-      selectedLanguage === "ar" ? "تصفية الشركات" : "Companies Liquidation",
-      selectedLanguage === "ar"
-        ? "اللوائح الداخلية للشركات"
-        : "Internal Regulations for Companies",
-    ],
-    [
-      selectedLanguage === "ar"
-        ? "خدمات الشركات والمؤسسات"
-        : "Services for Companies and Institutions",
-      selectedLanguage === "ar" ? "التحكيم" : "Arbitration",
-      selectedLanguage === "ar" ? "الملكية الفكرية" : "Intellectual Property",
-      selectedLanguage === "ar"
-        ? "إعادة هيكلة الشركات وتنظيمها"
-        : "Corporate Restructuring and Reorganization",
-    ],
-    [
-      selectedLanguage === "ar"
-        ? "تأسيس الشركات الوطنية والأجنبية"
-        : "Establishing National and Foreign Companies",
-      selectedLanguage === "ar" ? "الوكالات التجارية" : "Commercial Agencies",
-      selectedLanguage === "ar" ? "دعم رؤية 2030" : "Supporting Vision 2030",
-      selectedLanguage === "ar" ? "التركات" : "Estates",
-    ],
   ];
 
   return (
@@ -89,7 +69,7 @@ export default function Navbar() {
       >
         {servicesOpen && (
           <div className="text-xl font-bold">
-            <Link href="/">
+            <Link href={`/${selectedLanguage}`}>
               <Image src={"/logo.png"} alt="logo" width={100} height={100} />
             </Link>
           </div>
@@ -97,17 +77,16 @@ export default function Navbar() {
 
         {!showSearch && (
           <nav
-          className={clsx(
-            "hidden md:flex space-x-6 font-medium items-center absolute left-1/2 transform -translate-x-1/2",
-            {
-              "space-x-reverse": isRtl,
-            }
-          )}
-        >
-        
+            className={clsx(
+              "hidden md:flex space-x-6 font-medium items-center absolute left-1/2 transform -translate-x-1/2",
+              {
+                "space-x-reverse": isRtl,
+              }
+            )}
+          >
             {!servicesOpen && (
               <Link
-              href={`/${selectedLanguage}/`}
+                href={`/${selectedLanguage}/`}
                 className="hover:text-primary transition mx-5 cursor-pointer"
               >
                 {selectedLanguage === "ar" ? "الرئيسية" : "Home"}
@@ -187,17 +166,22 @@ export default function Navbar() {
 
       {servicesOpen && (
         <div
-        className={`absolute left-1/2 transform -translate-x-1/2 w-[95vw] p-6 bg-brown text-white rounded rounded-t-none z-50 ${
-          isRtl ? "text-right" : "text-left"
-        }`}
-      >
-      
+          className={`absolute left-1/2 transform -translate-x-1/2 w-[95vw] p-6 bg-brown text-white rounded rounded-t-none z-50 ${
+            isRtl ? "text-right" : "text-left"
+          }`}
+        >
           <div className="max-w-7xl mx-auto flex flex-col justify-center pb-10 md:flex-row gap-16">
             {serviceItems.map((column, i) => (
               <div key={i} className="space-y-10 text-sm">
                 {column.map((item, j) => (
                   <div key={j} className="hover:underline cursor-pointer">
-                    {item}
+                    <Link
+                      href={`/${selectedLanguage}/services/${item.toLowerCase().replace(/\s+/g, '-')}`}
+                      className="hover:underline"
+                      onClick={() => setServicesOpen(false)}
+                    >
+                      {item}
+                    </Link>
                   </div>
                 ))}
               </div>

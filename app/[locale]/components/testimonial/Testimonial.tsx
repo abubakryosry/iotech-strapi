@@ -21,14 +21,12 @@ export default function TestimonialSection({ locale }: { locale: string }) {
     async function getTestimonials() {
       try {
         const clientsResponse = await fetchClients(locale);
-        console.log("Fetched clients raw data:", clientsResponse);
   
         const clients = clientsResponse.data || [];
-        console.log("Clients array:", clients);
   
         if (!Array.isArray(clients) || clients.length === 0) {
           console.warn("No valid clients returned from API");
-          setTestimonials([]); // Handle empty data
+          setTestimonials([]); 
           return;
         }
   

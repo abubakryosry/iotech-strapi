@@ -23,7 +23,8 @@ export default function TeamSlider({ locale }: TeamSliderProps) {
     const getTeams = async () => {
       try {
         const data = await fetchTeams(locale);
-        const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:1337";
+        const baseUrl =
+          process.env.NEXT_PUBLIC_API_URL || "http://localhost:1337";
 
         const formattedTeams =
           data?.data?.map((member: any) => {

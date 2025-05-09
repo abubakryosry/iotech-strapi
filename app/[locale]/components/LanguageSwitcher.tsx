@@ -17,7 +17,6 @@ const LanguageSwitcher: React.FC = () => {
   const dispatch = useDispatch();
   const [isOpen, setIsOpen] = useState(false);
 
-  // Get the current language from the Redux store
   const selectedLanguage = useSelector((state: RootState) => state.language.language);
 
   const languages: Language[] = [

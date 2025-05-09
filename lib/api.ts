@@ -2,17 +2,13 @@
 export async function fetchHeroSection() {
   const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:1337";
 
-  // Construct the full API URL for the hero section
   const apiUrl = `${baseUrl}/api/hero-section?populate=*`;
 
-  console.log("API URL being called:", apiUrl); // Log the API URL for debugging
 
   try {
-    // Fetch data from the API
     const response = await fetch(apiUrl);
 
     if (!response.ok) {
-      // Log the error response for debugging
       const errorText = await response.text();
       console.error(
         `Error fetching hero section: ${response.status} - ${response.statusText}`,
@@ -21,10 +17,8 @@ export async function fetchHeroSection() {
       throw new Error(`Failed to fetch hero section`);
     }
 
-    const data = await response.json(); // Parse the JSON response
-    console.log("Fetched hero section data:", data); // Debug fetched data
+    const data = await response.json(); 
 
-    // Extracting the video and image URLs
     const heroData = data?.data?.hero || [];
     const videos = heroData
       .filter((item: any) => item.mime.startsWith("video/"))
@@ -37,25 +31,20 @@ export async function fetchHeroSection() {
     return { videos, images };
   } catch (error) {
     console.error("Network or other error:", error);
-    throw error; // Re-throw the error to be handled higher up
+    throw error; 
   }
 }
 
-// testimonial
 export async function fetchClients(locale: string) {
   const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:1337";
 
-  // Construct the full API URL
   const apiUrl = `${baseUrl}/api/clients?locale=${locale}&populate=*`;
 
-  console.log("API URL being called:", apiUrl); // Log the API URL for debugging
 
   try {
-    // Fetch data from the API
     const response = await fetch(apiUrl);
 
     if (!response.ok) {
-      // Log the error response for debugging
       const errorText = await response.text();
       console.error(
         `Error fetching clients: ${response.status} - ${response.statusText}`,
@@ -64,30 +53,25 @@ export async function fetchClients(locale: string) {
       throw new Error(`Failed to fetch clients for locale: ${locale}`);
     }
 
-    const data = await response.json(); // Parse the JSON response
-    console.log("Fetched data:", data); // Debug fetched data
+    const data = await response.json(); 
 
     return data;
   } catch (error) {
     console.error("Network or other error:", error);
-    throw error; // Re-throw the error to be handled higher up
+    throw error; 
   }
 }
 // teams
 export async function fetchTeams(locale: string) {
   const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:1337";
 
-  // Construct the full API URL
   const apiUrl = `${baseUrl}/api/teams?locale=${locale}&populate=*`;
 
-  console.log("API URL being called:", apiUrl); // Log the API URL for debugging
 
   try {
-    // Fetch data from the API
     const response = await fetch(apiUrl);
 
     if (!response.ok) {
-      // Log the error response for debugging
       const errorText = await response.text();
       console.error(
         `Error fetching teams: ${response.status} - ${response.statusText}`,
@@ -96,13 +80,12 @@ export async function fetchTeams(locale: string) {
       throw new Error(`Failed to fetch teams for locale: ${locale}`);
     }
 
-    const data = await response.json(); // Parse the JSON response
-    console.log("Fetched data:", data); // Debug fetched data
+    const data = await response.json(); 
 
     return data;
   } catch (error) {
     console.error("Network or other error:", error);
-    throw error; // Re-throw the error to be handled higher up
+    throw error; 
   }
 }
 // about
@@ -147,7 +130,7 @@ export async function fetchAbout(locale: string): Promise<AboutData[]> {
   }
 }
 // blog
-// app/api.ts
+
 
 export async function fetchBlogs(locale: string) {
   const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:1337";
@@ -189,7 +172,8 @@ export async function fetchServices(locale: string) {
       throw new Error(`Failed to fetch services for locale: ${locale}`);
     }
     const data = await response.json();
-    console.log("Fetched Data:", data); // Log the entire response data
+    console.log(data);
+    
     return (
       data?.data?.map((service: any) => ({
         id: service.id,
@@ -218,17 +202,14 @@ export async function fetchContact(
   locale: string = "en"
 ): Promise<ContactData | null> {
   try {
-    // Validate locale to ensure it's either 'en' or 'ar'
     const validLocale = ["en", "ar"].includes(locale) ? locale : "en";
     const baseUrl = process.env.NEXT_PUBLIC_API_URL || "http://localhost:1337";
     const url = `${baseUrl}/api/contacts?locale=${validLocale}`;
 
-    console.log(`Fetching contact data from: ${url}`);
 
     const response = await fetch(url);
 
     if (!response.ok) {
-      // Log the status and status text for better error tracing
       console.error(
         `Failed to fetch contact data (${validLocale}), Status: ${response.status} - ${response.statusText}`
       );
@@ -236,9 +217,7 @@ export async function fetchContact(
     }
 
     const { data } = await response.json();
-    console.log("Fetched Contact Data:", data);
 
-    // Check if data exists and has items
     if (Array.isArray(data) && data.length > 0) {
       const contact = data[0] || {};
       return {
@@ -253,7 +232,6 @@ export async function fetchContact(
     console.warn(`No contact data found for locale: ${validLocale}`);
     return null;
   } catch (error) {
-    // Improved error logging with specific details
     console.error(
       `Error fetching contact data for locale ${locale}: ${
         error instanceof Error ? error.message : String(error)
