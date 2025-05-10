@@ -5,7 +5,7 @@ export type LanguageState = {
 };
 
 const initialState: LanguageState = {
-  language: "en", // Default language
+  language: "en", 
 };
 
 const languageSlice = createSlice({

@@ -11,17 +11,14 @@ interface ContactData {
     submit: string;
 }
 
-// Server-side function to fetch data
 async function getContactData(locale: string): Promise<ContactData | null> {
     const currentLocale = (locale === 'ar' || locale === 'en') ? locale : 'en';
     return await fetchContact(currentLocale);
 }
 
 const Contact = async ({ params }: { params: { locale?: string } }) => {
-    // Fetch the contact data on the server
     const contactData = await getContactData(params.locale ?? 'en');
 
-    // Handle loading state (fallback UI)
     if (!contactData) return <p>Loading...</p>;
 
     return (

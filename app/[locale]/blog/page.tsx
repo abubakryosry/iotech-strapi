@@ -1,4 +1,3 @@
-// app/[locale]/blog/page.tsx
 
 import React from "react";
 import CoverImage from "../components/CoverImage";
@@ -11,7 +10,6 @@ type Blog = {
   content: string;
 };
 
-// Fetch data from API using SSR
 async function fetchBlogs(locale: string): Promise<Blog[]> {
   const apiUrl = `${baseUrl}/api/blogs?locale=${locale}&populate=*`;
 
@@ -35,7 +33,7 @@ async function fetchBlogs(locale: string): Promise<Blog[]> {
   }
 }
 
-// SSR Page Component
+
 const BlogPage = async ({ params }: { params: { locale: string } }) => {
   const locale = params.locale || "en";
   const blogs = await fetchBlogs(locale);
@@ -72,7 +70,7 @@ const BlogPage = async ({ params }: { params: { locale: string } }) => {
 
 export default BlogPage;
 
-// Enable dynamic params to support locales
+
 export async function generateStaticParams() {
   return [{ locale: "en" }, { locale: "ar" }];
 }

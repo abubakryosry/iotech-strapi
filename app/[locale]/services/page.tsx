@@ -1,4 +1,3 @@
-// app/[locale]/services/page.tsx
 import React from 'react';
 import CoverImage from '../components/CoverImage';
 import { fetchServices } from '@/lib/api';

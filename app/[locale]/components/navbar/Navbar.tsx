@@ -15,22 +15,19 @@ export default function Navbar() {
   const [showSearch, setShowSearch] = useState(false);
   const [isHydrated, setIsHydrated] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
-  const [serviceItems, setServiceItems] = useState<string[][]>([]); // State for storing grouped service items
+  const [serviceItems, setServiceItems] = useState<string[][]>([]); 
   
   const selectedLanguage = useSelector((state: RootState) => state.language.language);
   const isRtl = selectedLanguage === "ar";
   
-  // Always run this effect on mount and when selectedLanguage changes
   useEffect(() => {
     setIsHydrated(true);
   }, []);
 
-  // Fetch and set services dynamically based on the selected language
   useEffect(() => {
     async function loadServices() {
-      const services = await fetchServices(selectedLanguage); // Fetching services from the API
+      const services = await fetchServices(selectedLanguage); 
 
-      // Group services into chunks of 4
       const chunkSize = 4;
       const groupedServices: string[][] = [];
       for (let i = 0; i < services.length; i += chunkSize) {
@@ -44,7 +41,6 @@ export default function Navbar() {
   }, [selectedLanguage]);
 
   useEffect(() => {
-    // This ensures that the effect for hydration is only triggered once
     if (!isHydrated) return;
   }, [isHydrated]);
 

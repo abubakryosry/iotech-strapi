@@ -8,7 +8,6 @@ type AboutData = {
   description: string;
 };
 
-// Fetch data from API using SSR
 async function fetchAbout(locale: string): Promise<AboutData> {
   const apiUrl = `${baseUrl}/api/abouts?locale=${locale}&populate=*`;
 
@@ -19,7 +18,6 @@ async function fetchAbout(locale: string): Promise<AboutData> {
     }
     const data = await response.json();
 
-    // Extracting the first item from the data array
     const aboutData = data?.data?.[0];
 
     return {
@@ -31,7 +29,6 @@ async function fetchAbout(locale: string): Promise<AboutData> {
   }
 }
 
-// SSR Page Component
 const AboutPage = async ({ params }: { params: { locale: string } }) => {
   try {
     const locale = params.locale || "en";
@@ -58,7 +55,6 @@ const AboutPage = async ({ params }: { params: { locale: string } }) => {
 
 export default AboutPage;
 
-// Enable dynamic params to support locales
 export async function generateStaticParams() {
   return [{ locale: "en" }, { locale: "ar" }];
 }

@@ -41,6 +41,17 @@ export default function TeamSlider({ locale }: TeamSliderProps) {
           }) || [];
 
         setTeamMembers(formattedTeams);
+
+        // Initialize swiper after setting team members
+        if (swiperRef.current) {
+          const swiperInstance = swiperRef.current.swiper;
+          if (swiperInstance && swiperInstance.params.navigation) {
+            swiperInstance.params.navigation.prevEl = ".custom-prev-btn";
+            swiperInstance.params.navigation.nextEl = ".custom-next-btn";
+            swiperInstance.navigation.init();
+            swiperInstance.navigation.update();
+          }
+        }
       } catch (error) {
         console.error("Error fetching team members:", error);
       }
@@ -48,18 +59,6 @@ export default function TeamSlider({ locale }: TeamSliderProps) {
 
     getTeams();
   }, [locale]);
-
-  useEffect(() => {
-    if (swiperRef.current) {
-      const swiperInstance = swiperRef.current.swiper;
-      if (swiperInstance && swiperInstance.params.navigation) {
-        swiperInstance.params.navigation.prevEl = ".custom-prev-btn";
-        swiperInstance.params.navigation.nextEl = ".custom-next-btn";
-        swiperInstance.navigation.init();
-        swiperInstance.navigation.update();
-      }
-    }
-  }, [teamMembers]);
 
   return (
     <section
@@ -101,12 +100,12 @@ export default function TeamSlider({ locale }: TeamSliderProps) {
             nextEl: ".custom-next-btn",
           }}
           spaceBetween={30}
-          slidesPerView={1}
-          loop
+          slidesPerView={Math.min(teamMembers.length, 3)} // Ensure slidesPerView does not exceed the number of members
+          loop={teamMembers.length > 3} // Only enable loop if enough slides are present
           breakpoints={{
             640: { slidesPerView: 1 },
             768: { slidesPerView: 2 },
-            1024: { slidesPerView: 3 },
+            1024: { slidesPerView: Math.min(teamMembers.length, 3) },
           }}
           onSwiper={(swiper) => {
             swiperRef.current = swiper;
@@ -120,8 +119,9 @@ export default function TeamSlider({ locale }: TeamSliderProps) {
                   <Image
                     src={member.image}
                     alt={member.name}
-                    layout="fill"
-                    objectFit="cover"
+                    fill
+                    sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                    style={{ objectFit: "cover" }}
                   />
                 </div>
                 <h3 className="text-lg font-semibold text-brown">

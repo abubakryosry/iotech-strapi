@@ -35,7 +35,8 @@ const fetchHeroSection = async (): Promise<Slide[]> => {
       return { type, src: url, alt };
     });
 
-    return formattedSlides;
+    // Sort slides to prioritize videos first
+    return formattedSlides.sort((a, b) => (a.type === "video" ? -1 : 1));
   } catch (error) {
     console.error("Error fetching hero section:", error);
     return [];
@@ -68,51 +69,45 @@ const HeroSection = ({ locale }: HeroSectionProps) => {
             renderBullet: (index, className) =>
               `<span class="${className} custom-bullet"></span>`,
           }}
-          loop={true}
+          loop={slides.length > 1}
           className="w-full h-full"
           onInit={(swiper) => {
-            // Explicitly start autoplay after initialization
             if (swiper?.autoplay) swiper.autoplay.start();
           }}
           onSlideChange={(swiper) => {
-            // Restart autoplay when slide changes
             if (swiper?.autoplay) swiper.autoplay.start();
           }}
           onPaginationUpdate={(swiper) => {
-            // Restart autoplay when clicking on dots
             if (swiper?.autoplay) swiper.autoplay.start();
           }}
         >
-          {/* Ensure video slides are prioritized */}
-          {slides
-            .sort((a, b) => (a.type === "video" ? -1 : 1))
-            .map((slide, index) => (
-              <SwiperSlide key={index}>
-                {slide.type === "video" ? (
-                  <video
-                    autoPlay
-                    loop
-                    muted
-                    playsInline
-                    className="absolute inset-0 w-full h-full object-cover"
-                  >
-                    <source src={slide.src} type="video/mp4" />
-                  </video>
-                ) : (
-                  <div className="relative w-full h-full">
-                    <Image
-                      src={slide.src}
-                      alt={slide.alt}
-                      fill
-                      sizes="100vw"
-                      style={{ objectFit: "cover" }}
-                      priority
-                    />
-                  </div>
-                )}
-                <div className="absolute inset-0 bg-brown/50"></div>
-              </SwiperSlide>
-            ))}
+          {slides.map((slide, index) => (
+            <SwiperSlide key={index}>
+              {slide.type === "video" ? (
+                <video
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="absolute inset-0 w-full h-full object-cover"
+                >
+                  <source src={slide.src} type="video/mp4" />
+                </video>
+              ) : (
+                <div className="relative w-full h-full">
+                  <Image
+                    src={slide.src}
+                    alt={slide.alt}
+                    fill
+                    sizes="100vw"
+                    style={{ objectFit: "cover" }}
+                    priority
+                  />
+                </div>
+              )}
+              <div className="absolute inset-0 bg-brown/50"></div>
+            </SwiperSlide>
+          ))}
         </Swiper>
       </div>
 
@@ -149,12 +144,13 @@ const HeroSection = ({ locale }: HeroSectionProps) => {
           </div>
 
           {/* Right Section: Square Image */}
-          <div className=" p-2 rounded-md shadow-lg w-[300px] h-[300px] flex items-center justify-center">
+          <div className="p-2 rounded-md shadow-lg w-[300px] h-[300px] flex items-center justify-center">
             <Image
               src="/Image.png"
               alt="Profile"
               width={300}
               height={300}
+              priority
               className="rounded-md object-cover"
             />
           </div>

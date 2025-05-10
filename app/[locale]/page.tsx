@@ -3,9 +3,8 @@ import Testimonial from "@/app/[locale]/components/testimonial/Testimonial";
 import WhiteSection from "@/app/[locale]/components/whitesection/WhiteSection";
 import { Metadata } from "next";
 import TeamSlider from "./components/Team";
-import { notFound } from "next/navigation"; // Import the notFound utility for redirecting
+import { notFound } from "next/navigation"; 
 
-// Define metadata dynamically based on locale
 export async function generateMetadata({ params }: { params: { locale: string } }): Promise<Metadata> {
   const { locale } = params;
 
@@ -18,10 +17,9 @@ export async function generateMetadata({ params }: { params: { locale: string } 
 export default async function Home({ params }: { params: { locale: string } }) {
   const { locale } = params;
 
-  // Check if the locale is valid
   if (!["en", "ar"].includes(locale)) {
-    notFound(); // This will return a 404 error page (or you can redirect to another page)
-    return; // This line ensures no further code runs after the redirect
+    notFound(); 
+    return; 
   }
 
   return (

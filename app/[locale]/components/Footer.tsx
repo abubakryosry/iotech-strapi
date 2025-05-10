@@ -9,7 +9,6 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 export default function Footer() {
-  // Dynamically get the current locale from the URL
   const params = useParams();
   const locale = params.locale === "ar" ? "ar" : "en";
 
